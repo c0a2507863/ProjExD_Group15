@@ -1,6 +1,7 @@
 import os
 import sys
 import pygame as pg
+import random
 
 
 # =========================================
@@ -213,6 +214,7 @@ class Game:
         self.player = Player()
         self.obstacle = Obstacle()
         self.background = Background()
+        self.item = Item() #アイテム用
 
         self.font = pg.font.Font(None, 50)
         self.big_font = pg.font.Font(None, 80)
@@ -242,6 +244,12 @@ class Game:
         if player_rect.colliderect(obstacle_rect):
             self.game_over = True
 
+        item_rect = self.item.get_rect() #アイテム当たり判定
+        if player_rect.colliderect(item_rect):
+            self.score += 100
+            self.item.x = WIDTH + random.randint(300, 800)
+            self.item.y = random.randint(200, 500)
+
     def update(self):
         """
         更新処理
@@ -252,6 +260,7 @@ class Game:
             self.player.update(self.ground_y)
             self.obstacle.update()
             self.background.update()
+            self.item.update() # アイテム更新
 
             self.check_collision()
 
@@ -270,6 +279,7 @@ class Game:
 
         self.player.draw(screen)
         self.obstacle.draw(screen)
+        self.item.draw(screen) # アイテム描画
 
         # SCORE表示
         score_text = self.font.render(
@@ -315,6 +325,53 @@ class Game:
             )
 
             screen.blit(result_distance, distance_rect)
+
+
+# =========================================
+# Itemクラス
+# =========================================
+class Item:
+    """
+    アイテムクラス
+    """
+    def __init__(self):
+        self.x = WIDTH
+        self.y = random.randint(200,500)
+
+        self.w = 50
+        self.h = 50
+
+        self.speed = 15
+    
+    def update(self):
+        """
+        アイテム更新
+        """
+
+        self.x -= self.speed
+
+        # 画面外へ行ったら戻す ランダムに
+        if self.x + self.w < 0:
+            self.x = WIDTH + random.randint(300, 800)
+    
+    def draw(self, screen: pg.Surface):
+        """
+        アイテム描画
+        """
+
+        pg.draw.rect(
+            screen,
+            YELLOW,
+            (self.x, self.y, self.w, self.h)
+        )
+
+    def get_rect(self) -> pg.Rect:
+        return pg.Rect(
+            self.x,
+            self.y,
+            self.w,
+            self.h
+        )
 
 
 # =========================================
