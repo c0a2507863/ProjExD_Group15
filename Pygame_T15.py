@@ -110,7 +110,6 @@ class Player:
             self.vy = self.jump_power     # 再び上方向の初速を与える
             self.nidanjump = True
 
-
     def turbo(self):
         """
         地面に足がついている、または一段ジャンプをしている最中にシフトキーを押すと、ロケットのように上方向の速度を与える。
